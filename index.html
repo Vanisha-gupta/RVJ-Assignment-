@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RVJ User Management System</title>
+    <title>RVJ CRUD Assisment</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="container">
-      <button id="newUserBtn">New User</button>
+    <div class="wrapper">
+      <button id="newUserButton">New User</button>
       <table>
         <thead>
           <tr>
@@ -17,36 +17,30 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="userTableBody">
-          <!-- User rows will be inserted here -->
-        </tbody>
+        <tbody id="userTableData"></tbody>
       </table>
-      <div id="pagination">
-        <!-- Pagination buttons will be inserted here -->
-      </div>
+      <div id="paginationControls"></div>
     </div>
-
-    <!-- User Form Modal -->
-    <div id="userFormModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
+    <div id="userFormDialog" class="dialog">
+      <div class="dialog-content">
+        <span class="closeBtn">&times;</span>
         <form id="userForm">
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name" required />
+          <label for="userName">Username:</label>
+          <input type="text" id="userName" name="userName" required />
 
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required />
+          <label for="userEmail">Email:</label>
+          <input type="email" id="userEmail" name="userEmail" required />
 
-          <label for="gender">Gender:</label>
-          <select id="gender" name="gender" required>
+          <label for="userGender">Gender:</label>
+          <select id="userGender" name="userGender" required>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
 
-          <label for="status">Status:</label>
-          <input type="checkbox" id="status" name="status" /> Active
+          <label for="userStatus">Status:</label>
+          <input type="checkbox" id="userStatus" name="userStatus" /> Active
 
-          <input type="hidden" id="userId" />
+          <input type="hidden" id="userID" />
           <button type="submit">Save</button>
         </form>
       </div>
