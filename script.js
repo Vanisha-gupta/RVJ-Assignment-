@@ -1,25 +1,25 @@
-const apiBaseUrl = 'https://gorest.co.in/public-api/users';
-const apiToken = '98e07e2b8850eb69498d04a65e8b62777bd7f4bcc241589befe2317d5e7c0dee';
+const URL = 'https://gorest.co.in/public-api/users';
+const TOKE = '98e07e2b8850eb69498d04a65e8b62777bd7f4bcc241589befe2317d5e7c0dee';
 
 let currentPage = 1;
-const usersPerPage = 7;
+const ITEMS_PER_PAGE = 7;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadUsers(currentPage);
-    setupFormModal();
+    fetchUsers(currentPage);
+    initializeModal();
 });
 
-function loadUsers(page) {
-    fetch(${ apiBaseUrl } ? page = ${ page }, {
+function fetchUsers(page) {
+    fetch(`${URL}?page=${page}`, {
         headers: {
-            'Authorization': Bearer ${ apiToken }
+            'Authorization': `Bearer ${TOKE}`
         }
     })
     .then(response => response.json())
     .then(data => {
         const users = data.data;
         displayUsers(users, page);
-        setupPagination(data.meta.pagination);
+        configurePagination(data.meta.pagination);
     })
     .catch(error => console.error('Error fetching users:', error));
 }
@@ -31,10 +31,10 @@ function displayUsers(users, page) {
     users.forEach((user, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${(page - 1) * usersPerPage + index + 1}</td>
+            <td>${(page - 1) * ITEMS_PER_PAGE + index + 1}</td>
             <td>${user.name}</td>
             <td class="actions">
-                <a href="#" onclick="showUser(${user.id})">Show</a>
+                <a href="#" onclick="viewUser(${user.id})">Show</a>
                 <a href="#" onclick="editUser(${user.id})">Edit</a>
                 <a href="#" onclick="deleteUser(${user.id})">Delete</a>
             </td>
@@ -43,40 +43,40 @@ function displayUsers(users, page) {
     });
 }
 
-function setupPagination(pagination) {
+function configurePagination(pagination) {
     const paginationDiv = document.getElementById('pagination');
     paginationDiv.innerHTML = '';
 
     if (pagination.page > 1) {
-        const prevBtn = document.createElement('button');
-        prevBtn.innerText = '<<';
-        prevBtn.onclick = () => loadUsers(pagination.page - 1);
-        paginationDiv.appendChild(prevBtn);
+        const prevButton = document.createElement('button');
+        prevButton.innerText = '<<';
+        prevButton.onclick = () => fetchUsers(pagination.page - 1);
+        paginationDiv.appendChild(prevButton);
     }
 
     for (let i = 1; i <= pagination.pages; i++) {
-        const pageBtn = document.createElement('button');
-        pageBtn.innerText = i;
+        const pageButton = document.createElement('button');
+        pageButton.innerText = i;
         if (i === pagination.page) {
-            pageBtn.disabled = true;
+            pageButton.disabled = true;
         }
-        pageBtn.onclick = () => loadUsers(i);
-        paginationDiv.appendChild(pageBtn);
+        pageButton.onclick = () => fetchUsers(i);
+        paginationDiv.appendChild(pageButton);
     }
 
     if (pagination.page < pagination.pages) {
-        const nextBtn = document.createElement('button');
-        nextBtn.innerText = '>>';
-        nextBtn.onclick = () => loadUsers(pagination.page + 1);
-        paginationDiv.appendChild(nextBtn);
+        const nextButton = document.createElement('button');
+        nextButton.innerText = '>>';
+        nextButton.onclick = () => fetchUsers(pagination.page + 1);
+        paginationDiv.appendChild(nextButton);
     }
 }
 
 document.getElementById('newUserBtn').addEventListener('click', () => {
-    openFormModal();
+    openUserModal();
 });
 
-function openFormModal(user = {}) {
+function openUserModal(user = {}) {
     const modal = document.getElementById('userFormModal');
     const form = document.getElementById('userForm');
 
@@ -89,12 +89,12 @@ function openFormModal(user = {}) {
     modal.style.display = 'block';
 }
 
-function setupFormModal() {
+function initializeModal() {
     const modal = document.getElementById('userFormModal');
-    const span = document.getElementsByClassName('close')[0];
+    const closeButton = document.getElementsByClassName('close')[0];
     const form = document.getElementById('userForm');
 
-    span.onclick = () => {
+    closeButton.onclick = () => {
         modal.style.display = 'none';
     };
 
@@ -123,35 +123,35 @@ function setupFormModal() {
 }
 
 function createUser(user) {
-    fetch(apiBaseUrl, {
+    fetch(URL, {
         method: 'POST',
         headers: {
-            'Authorization': Bearer ${ apiToken },
-        'Content-Type': 'application/json'
+            'Authorization': `Bearer ${TOKE}`,
+            'Content-Type': 'application/json'
         },
-body: JSON.stringify(user)
+        body: JSON.stringify(user)
     })
     .then(response => response.json())
     .then(() => {
-        loadUsers(currentPage);
-        closeFormModal();
+        fetchUsers(currentPage);
+        closeModal();
     })
     .catch(error => console.error('Error creating user:', error));
 }
 
 function updateUser(userId, user) {
-    fetch(${ apiBaseUrl } / ${ userId }, {
+    fetch(`${URL}/${userId}`, {
         method: 'PUT',
         headers: {
-            'Authorization': Bearer ${ apiToken },
-        'Content-Type': 'application/json'
+            'Authorization': `Bearer ${TOKE}`,
+            'Content-Type': 'application/json'
         },
-body: JSON.stringify(user)
+        body: JSON.stringify(user)
     })
     .then(response => response.json())
     .then(() => {
-        loadUsers(currentPage);
-        closeFormModal();
+        fetchUsers(currentPage);
+        closeModal();
     })
     .catch(error => console.error('Error updating user:', error));
 }
@@ -161,47 +161,47 @@ function deleteUser(userId) {
         return;
     }
 
-    fetch(${ apiBaseUrl } / ${ userId }, {
+    fetch(`${URL}/${userId}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': Bearer ${ apiToken }
+            'Authorization': `Bearer ${TOKE}`
         }
     })
     .then(() => {
-                loadUsers(currentPage);
-            })
+        fetchUsers(currentPage);
+    })
     .catch(error => console.error('Error deleting user:', error));
 }
 
-function showUser(userId) {
-    fetch(${ apiBaseUrl } / ${ userId }, {
+function viewUser(userId) {
+    fetch(`${URL}/${userId}`, {
         headers: {
-            'Authorization': Bearer ${ apiToken }
+            'Authorization': `Bearer ${TOKE}`
         }
     })
     .then(response => response.json())
     .then(data => {
         const user = data.data;
-        alert(Name: ${ user.name }\nEmail: ${ user.email }\nGender: ${ user.gender }\nStatus: ${ user.status });
+        alert(`Name: ${user.name}\nEmail: ${user.email}\nGender: ${user.gender}\nStatus: ${user.status}`);
     })
     .catch(error => console.error('Error fetching user details:', error));
 }
 
 function editUser(userId) {
-    fetch(${ apiBaseUrl } / ${ userId }, {
+    fetch(`${URL}/${userId}`, {
         headers: {
-            'Authorization': Bearer ${ apiToken }
+            'Authorization': `Bearer ${TOKE}`
         }
     })
     .then(response => response.json())
     .then(data => {
         const user = data.data;
-        openFormModal(user);
+        openUserModal(user);
     })
     .catch(error => console.error('Error fetching user details:', error));
 }
 
-function closeFormModal() {
+function closeModal() {
     const modal = document.getElementById('userFormModal');
     modal.style.display = 'none';
 }
